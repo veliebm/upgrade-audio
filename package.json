@@ -1,0 +1,11 @@
+{
+  "name": "upgrade-audio",
+  "version": "0.0.1",
+  "description": "Website that makes any audio you upload sound like it's being played while you're on hold with a horrendous call center.",
+  "keywords": [
+    "audio",
+    "fun"
+  ],
+  "author": "veliebm, spencerflem",
+  "license": "MIT"
+}
