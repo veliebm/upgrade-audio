@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+function generateDistortionCurve(amount) {
+    const samples = 44100;
+    const curve = new Float32Array(samples);
+    const deg = Math.PI / 180;
+    const x = 2 * amount * deg;
+    for (let i = 0; i < samples; ++i) {
+        const t = (i * 2) / samples - 1;
+        curve[i] = ((3 + x) * t * 20 * deg) / (Math.PI + x * Math.abs(t));
+    }
+    return curve;
+}
 document.addEventListener("DOMContentLoaded", () => {
     const audioInput = document.getElementById("audio-input");
     const bandPassFilter = document.getElementById("band-pass-filter");
@@ -71,6 +82,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (distortion.checked) {
             // Apply distortion
+            const waveshaper = audioContext.createWaveShaper();
+            waveshaper.curve = generateDistortionCurve(400);
+            lastNode.connect(waveshaper);
+            lastNode = waveshaper;
         }
         if (echo.checked) {
             // Apply echo
