@@ -36,12 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {
         const audioContext = new AudioContext();
         const source = audioContext.createBufferSource();
         source.buffer = audioBuffer;
-        const masterGain = audioContext.createGain();
+        let lastNode = source;
         if (bandPassFilter.checked) {
             // Apply band-pass filter
+            const filter = audioContext.createBiquadFilter();
+            filter.type = "bandpass";
+            filter.frequency.value = 1000;
+            filter.Q.value = 0.7;
+            lastNode.connect(filter);
+            lastNode = filter;
         }
         if (compression.checked) {
             // Apply compression
+            const compressor = audioContext.createDynamicsCompressor();
+            compressor.threshold.value = -24;
+            compressor.knee.value = 30;
+            compressor.ratio.value = 12;
+            compressor.attack.value = 0.003;
+            compressor.release.value = 0.25;
+            lastNode.connect(compressor);
+            lastNode = compressor;
         }
         if (downsample.checked) {
             // Apply downsampling
@@ -51,9 +65,16 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (echo.checked) {
             // Apply echo
+            const delay = audioContext.createDelay(2);
+            const feedback = audioContext.createGain();
+            delay.delayTime.value = 0.25;
+            feedback.gain.value = 0.5;
+            lastNode.connect(delay);
+            delay.connect(feedback);
+            feedback.connect(delay);
+            lastNode = delay;
         }
-        source.connect(masterGain);
-        masterGain.connect(audioContext.destination);
+        lastNode.connect(audioContext.destination);
         source.start();
         // Wait for processing to complete
         yield new Promise((resolve) => setTimeout(resolve, audioBuffer.duration * 1000));
