@@ -10,8 +10,13 @@
     <h1>Audio Distortion App</h1>
     <input type="file" id="audio-input" accept="audio/*" />
     <div class="options">
-      <label><input type="checkbox" id="distortion1" /> Distortion 1</label>
-      <label><input type="checkbox" id="distortion2" /> Distortion 2</label>
+      <label
+        ><input type="checkbox" id="band-pass-filter" /> Band-pass Filter</label
+      >
+      <label><input type="checkbox" id="compression" /> Compression</label>
+      <label><input type="checkbox" id="downsample" /> Downsample</label>
+      <label><input type="checkbox" id="distortion" /> Distortion</label>
+      <label><input type="checkbox" id="echo" /> Echo</label>
     </div>
     <button id="process">Apply Distortions</button>
     <div id="status"></div>

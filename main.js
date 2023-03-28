@@ -10,8 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 document.addEventListener("DOMContentLoaded", () => {
     const audioInput = document.getElementById("audio-input");
-    const distortion1 = document.getElementById("distortion1");
-    const distortion2 = document.getElementById("distortion2");
+    const bandPassFilter = document.getElementById("band-pass-filter");
+    const compression = document.getElementById("compression");
+    const downsample = document.getElementById("downsample");
+    const distortion = document.getElementById("distortion");
+    const echo = document.getElementById("echo");
     const processButton = document.getElementById("process");
     const status = document.getElementById("status");
     const downloadButton = document.getElementById("download");
@@ -33,13 +36,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const audioContext = new AudioContext();
         const source = audioContext.createBufferSource();
         source.buffer = audioBuffer;
-        if (distortion1.checked) {
-            // Apply distortion 1
+        const masterGain = audioContext.createGain();
+        if (bandPassFilter.checked) {
+            // Apply band-pass filter
         }
-        if (distortion2.checked) {
-            // Apply distortion 2
+        if (compression.checked) {
+            // Apply compression
         }
-        source.connect(audioContext.destination);
+        if (downsample.checked) {
+            // Apply downsampling
+        }
+        if (distortion.checked) {
+            // Apply distortion
+        }
+        if (echo.checked) {
+            // Apply echo
+        }
+        source.connect(masterGain);
+        masterGain.connect(audioContext.destination);
         source.start();
         // Wait for processing to complete
         yield new Promise((resolve) => setTimeout(resolve, audioBuffer.duration * 1000));

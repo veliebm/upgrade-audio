@@ -1,11 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const audioInput = document.getElementById("audio-input") as HTMLInputElement;
-  const distortion1 = document.getElementById(
-    "distortion1"
+  const bandPassFilter = document.getElementById(
+    "band-pass-filter"
   ) as HTMLInputElement;
-  const distortion2 = document.getElementById(
-    "distortion2"
+  const compression = document.getElementById(
+    "compression"
   ) as HTMLInputElement;
+  const downsample = document.getElementById("downsample") as HTMLInputElement;
+  const distortion = document.getElementById("distortion") as HTMLInputElement;
+  const echo = document.getElementById("echo") as HTMLInputElement;
   const processButton = document.getElementById("process") as HTMLButtonElement;
   const status = document.getElementById("status") as HTMLDivElement;
   const downloadButton = document.getElementById(
@@ -33,14 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const source = audioContext.createBufferSource();
     source.buffer = audioBuffer;
 
-    if (distortion1.checked) {
-      // Apply distortion 1
+    const masterGain = audioContext.createGain();
+
+    if (bandPassFilter.checked) {
+      // Apply band-pass filter
     }
-    if (distortion2.checked) {
-      // Apply distortion 2
+    if (compression.checked) {
+      // Apply compression
+    }
+    if (downsample.checked) {
+      // Apply downsampling
+    }
+    if (distortion.checked) {
+      // Apply distortion
+    }
+    if (echo.checked) {
+      // Apply echo
     }
 
-    source.connect(audioContext.destination);
+    source.connect(masterGain);
+    masterGain.connect(audioContext.destination);
     source.start();
 
     // Wait for processing to complete
