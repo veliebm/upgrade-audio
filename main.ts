@@ -33,10 +33,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const audioContext = new AudioContext();
-    const source = audioContext.createBufferSource();
-    source.buffer = audioBuffer;
 
-    let lastNode: AudioNode = source;
+    let lastNode: AudioNode;
+    let source: AudioBufferSourceNode;
+
+    if (downsample.checked) {
+      // Apply downsampling
+      const offlineCtx = new OfflineAudioContext(
+        1,
+        audioBuffer.duration * 8000,
+        8000
+      );
+      const offlineSource = offlineCtx.createBufferSource();
+      offlineSource.buffer = audioBuffer;
+      offlineSource.connect(offlineCtx.destination);
+      offlineSource.start();
+      const renderedBuffer = await offlineCtx.startRendering();
+      audioBuffer = renderedBuffer;
+    }
+
+    source = audioContext.createBufferSource();
+    source.buffer = audioBuffer;
+    lastNode = source;
 
     if (bandPassFilter.checked) {
       // Apply band-pass filter
@@ -57,9 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
       compressor.release.value = 0.25;
       lastNode.connect(compressor);
       lastNode = compressor;
-    }
-    if (downsample.checked) {
-      // Apply downsampling
     }
     if (distortion.checked) {
       // Apply distortion
