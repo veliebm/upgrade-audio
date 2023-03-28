@@ -1,0 +1,13 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.options {
+  margin: 1rem 0;
+}
+
+#status {
+  margin: 1rem 0;
+}
