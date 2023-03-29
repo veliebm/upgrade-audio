@@ -19,6 +19,51 @@ function generateDistortionCurve(amount) {
     }
     return curve;
 }
+function applyDownsampling(audioBuffer) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const offlineCtx = new OfflineAudioContext(1, audioBuffer.duration * 8000, 8000);
+        const offlineSource = offlineCtx.createBufferSource();
+        offlineSource.buffer = audioBuffer;
+        offlineSource.connect(offlineCtx.destination);
+        offlineSource.start();
+        const renderedBuffer = yield offlineCtx.startRendering();
+        return renderedBuffer;
+    });
+}
+function applyBandPassFilter(audioContext, lastNode) {
+    const filter = audioContext.createBiquadFilter();
+    filter.type = "bandpass";
+    filter.frequency.value = 1000;
+    filter.Q.value = 0.7;
+    lastNode.connect(filter);
+    return filter;
+}
+function applyCompression(audioContext, lastNode) {
+    const compressor = audioContext.createDynamicsCompressor();
+    compressor.threshold.value = -24;
+    compressor.knee.value = 30;
+    compressor.ratio.value = 12;
+    compressor.attack.value = 0.003;
+    compressor.release.value = 0.25;
+    lastNode.connect(compressor);
+    return compressor;
+}
+function applyDistortion(audioContext, lastNode) {
+    const waveshaper = audioContext.createWaveShaper();
+    waveshaper.curve = generateDistortionCurve(400);
+    lastNode.connect(waveshaper);
+    return waveshaper;
+}
+function applyEcho(audioContext, lastNode) {
+    const delay = audioContext.createDelay(2);
+    const feedback = audioContext.createGain();
+    delay.delayTime.value = 0.25;
+    feedback.gain.value = 0.5;
+    lastNode.connect(delay);
+    delay.connect(feedback);
+    feedback.connect(delay);
+    return delay;
+}
 document.addEventListener("DOMContentLoaded", () => {
     const audioInput = document.getElementById("audio-input");
     const bandPassFilter = document.getElementById("band-pass-filter");
@@ -39,64 +84,32 @@ document.addEventListener("DOMContentLoaded", () => {
         const arrayBuffer = yield file.arrayBuffer();
         audioBuffer = yield audioContext.decodeAudioData(arrayBuffer);
     }));
+    audioInput.addEventListener("change", (e) => __awaiter(void 0, void 0, void 0, function* () {
+        // Audio file input handling
+    }));
     processButton.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
         if (!audioBuffer) {
             status.textContent = "Please select an audio file first.";
             return;
         }
         const audioContext = new AudioContext();
-        let lastNode;
-        let source;
         if (downsample.checked) {
-            // Apply downsampling
-            const offlineCtx = new OfflineAudioContext(1, audioBuffer.duration * 8000, 8000);
-            const offlineSource = offlineCtx.createBufferSource();
-            offlineSource.buffer = audioBuffer;
-            offlineSource.connect(offlineCtx.destination);
-            offlineSource.start();
-            const renderedBuffer = yield offlineCtx.startRendering();
-            audioBuffer = renderedBuffer;
+            audioBuffer = yield applyDownsampling(audioBuffer);
         }
-        source = audioContext.createBufferSource();
+        const source = audioContext.createBufferSource();
         source.buffer = audioBuffer;
-        lastNode = source;
+        let lastNode = source;
         if (bandPassFilter.checked) {
-            // Apply band-pass filter
-            const filter = audioContext.createBiquadFilter();
-            filter.type = "bandpass";
-            filter.frequency.value = 1000;
-            filter.Q.value = 0.7;
-            lastNode.connect(filter);
-            lastNode = filter;
+            lastNode = applyBandPassFilter(audioContext, lastNode);
         }
         if (compression.checked) {
-            // Apply compression
-            const compressor = audioContext.createDynamicsCompressor();
-            compressor.threshold.value = -24;
-            compressor.knee.value = 30;
-            compressor.ratio.value = 12;
-            compressor.attack.value = 0.003;
-            compressor.release.value = 0.25;
-            lastNode.connect(compressor);
-            lastNode = compressor;
+            lastNode = applyCompression(audioContext, lastNode);
         }
         if (distortion.checked) {
-            // Apply distortion
-            const waveshaper = audioContext.createWaveShaper();
-            waveshaper.curve = generateDistortionCurve(400);
-            lastNode.connect(waveshaper);
-            lastNode = waveshaper;
+            lastNode = applyDistortion(audioContext, lastNode);
         }
         if (echo.checked) {
-            // Apply echo
-            const delay = audioContext.createDelay(2);
-            const feedback = audioContext.createGain();
-            delay.delayTime.value = 0.25;
-            feedback.gain.value = 0.5;
-            lastNode.connect(delay);
-            delay.connect(feedback);
-            feedback.connect(delay);
-            lastNode = delay;
+            lastNode = applyEcho(audioContext, lastNode);
         }
         lastNode.connect(audioContext.destination);
         source.start();
