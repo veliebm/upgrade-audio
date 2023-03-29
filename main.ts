@@ -1,3 +1,14 @@
+/**
+ * A script to process an audio file with various audio effects:
+ * downsampling, bandpass filtering, compression, distortion, and echo.
+ * The processed audio can be played and downloaded.
+ */
+
+/**
+ * Generates a distortion curve for a given amount of distortion.
+ * @param {number} amount - The amount of distortion.
+ * @returns {Float32Array} - The generated distortion curve.
+ */
 function generateDistortionCurve(amount: number): Float32Array {
   const samples = 44100;
   const curve = new Float32Array(samples);
@@ -12,6 +23,11 @@ function generateDistortionCurve(amount: number): Float32Array {
   return curve;
 }
 
+/**
+ * Applies downsampling to an audio buffer.
+ * @param {AudioBuffer} audioBuffer - The input audio buffer.
+ * @returns {Promise<AudioBuffer>} - The downsampled audio buffer.
+ */
 async function applyDownsampling(
   audioBuffer: AudioBuffer
 ): Promise<AudioBuffer> {
@@ -28,6 +44,12 @@ async function applyDownsampling(
   return renderedBuffer;
 }
 
+/**
+ * Applies a bandpass filter to the audio processing chain.
+ * @param {AudioContext} audioContext - The audio context.
+ * @param {AudioNode} lastNode - The previous node in the processing chain.
+ * @returns {AudioNode} - The bandpass filter node.
+ */
 function applyBandPassFilter(
   audioContext: AudioContext,
   lastNode: AudioNode
@@ -40,6 +62,12 @@ function applyBandPassFilter(
   return filter;
 }
 
+/**
+ * Applies compression to the audio processing chain.
+ * @param {AudioContext} audioContext - The audio context.
+ * @param {AudioNode} lastNode - The previous node in the processing chain.
+ * @returns {AudioNode} - The dynamics compressor node.
+ */
 function applyCompression(
   audioContext: AudioContext,
   lastNode: AudioNode
@@ -54,6 +82,12 @@ function applyCompression(
   return compressor;
 }
 
+/**
+ * Applies distortion to the audio processing chain.
+ * @param {AudioContext} audioContext - The audio context.
+ * @param {AudioNode} lastNode - The previous node in the processing chain.
+ * @returns {AudioNode} - The wave shaper node.
+ */
 function applyDistortion(
   audioContext: AudioContext,
   lastNode: AudioNode
@@ -64,6 +98,12 @@ function applyDistortion(
   return waveshaper;
 }
 
+/**
+ * Applies an echo effect to the audio processing chain.
+ * @param {AudioContext} audioContext - The audio context.
+ * @param {AudioNode} lastNode - The previous node in the processing chain.
+ * @returns {AudioNode} - The delay node.
+ */
 function applyEcho(audioContext: AudioContext, lastNode: AudioNode): AudioNode {
   const delay = audioContext.createDelay(2);
   const feedback = audioContext.createGain();
