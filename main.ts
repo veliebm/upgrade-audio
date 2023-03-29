@@ -67,8 +67,8 @@ function applyDistortion(
 function applyEcho(audioContext: AudioContext, lastNode: AudioNode): AudioNode {
   const delay = audioContext.createDelay(2);
   const feedback = audioContext.createGain();
-  delay.delayTime.value = 0.25;
-  feedback.gain.value = 0.5;
+  delay.delayTime.value = 0.1;
+  feedback.gain.value = 0.3;
   lastNode.connect(delay);
   delay.connect(feedback);
   feedback.connect(delay);
