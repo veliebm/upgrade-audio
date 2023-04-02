@@ -6,7 +6,6 @@
 
 /**
  * Converts an AudioBuffer to a WAVE format Blob.
- *
  * @param {AudioBuffer} buffer - The input audio buffer to be converted to WAVE format.
  * @param {number} length - The number of samples to include in the output WAVE file.
  * @returns {Blob} - A Blob representing the audio data in WAVE format.
