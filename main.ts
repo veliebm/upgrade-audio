@@ -5,6 +5,48 @@
  */
 
 /**
+ * Converts an AudioBuffer to a WAVE format Blob.
+ *
+ * @param {AudioBuffer} buffer - The input audio buffer to be converted to WAVE format.
+ * @param {number} length - The number of samples to include in the output WAVE file.
+ * @returns {Blob} - A Blob representing the audio data in WAVE format.
+ */
+function bufferToWave(buffer: AudioBuffer, length: number): Blob {
+  const wavBuffer = new ArrayBuffer(44 + length * 2);
+  const view = new DataView(wavBuffer);
+
+  function writeString(view: DataView, offset: number, str: string) {
+    for (let i = 0; i < str.length; i++) {
+      view.setUint8(offset + i, str.charCodeAt(i));
+    }
+  }
+
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+
+  writeString(view, 0, "RIFF");
+  view.setUint32(4, 32 + length * 2, true);
+  writeString(view, 8, "WAVE");
+  writeString(view, 12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, 1, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * 2, true);
+  view.setUint16(32, 2, true);
+  view.setUint16(34, 16, true);
+  writeString(view, 36, "data");
+  view.setUint32(40, length * 2, true);
+
+  const channelData = buffer.getChannelData(0);
+  for (let i = 0; i < length; i++) {
+    view.setInt16(44 + i * 2, channelData[i] * 0x7fff, true);
+  }
+
+  return new Blob([view], { type: "audio/wav" });
+}
+
+/**
  * Generates a distortion curve for a given amount of distortion.
  * @param {number} amount - The amount of distortion.
  * @returns {Float32Array} - The generated distortion curve.
@@ -189,6 +231,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   downloadButton.addEventListener("click", () => {
-    // Download distorted audio
+    const audioContext = new AudioContext();
+    const audioBufferToWavBlob = bufferToWave(audioBuffer, audioBuffer.length);
+    const url = URL.createObjectURL(audioBufferToWavBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "distorted-audio.wav";
+    link.click();
+    URL.revokeObjectURL(url);
   });
 });
