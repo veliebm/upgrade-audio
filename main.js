@@ -13,6 +13,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+/**
+ * Converts an AudioBuffer to a WAVE format Blob.
+ * @param buffer - The input audio buffer to be converted to WAVE format.
+ * @param length - The number of samples to include in the output WAVE file.
+ * @returns - A Blob representing the audio data in WAVE format.
+ */
 function bufferToWave(buffer, length) {
     const wavBuffer = new ArrayBuffer(44 + length * 2);
     const view = new DataView(wavBuffer);
@@ -44,8 +50,8 @@ function bufferToWave(buffer, length) {
 }
 /**
  * Generates a distortion curve for a given amount of distortion.
- * @param {number} amount - The amount of distortion.
- * @returns {Float32Array} - The generated distortion curve.
+ * @param amount - The amount of distortion.
+ * @returns - The generated distortion curve.
  */
 function generateDistortionCurve(amount) {
     const samples = 44100;
@@ -60,8 +66,8 @@ function generateDistortionCurve(amount) {
 }
 /**
  * Applies downsampling to an audio buffer.
- * @param {AudioBuffer} audioBuffer - The input audio buffer.
- * @returns {Promise<AudioBuffer>} - The downsampled audio buffer.
+ * @param audioBuffer - The input audio buffer.
+ * @returns - The downsampled audio buffer.
  */
 function applyDownsampling(audioBuffer) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -76,9 +82,9 @@ function applyDownsampling(audioBuffer) {
 }
 /**
  * Applies a bandpass filter to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The bandpass filter node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The bandpass filter node.
  */
 function applyBandPassFilter(audioContext, lastNode) {
     const filter = audioContext.createBiquadFilter();
@@ -90,9 +96,9 @@ function applyBandPassFilter(audioContext, lastNode) {
 }
 /**
  * Applies compression to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The dynamics compressor node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The dynamics compressor node.
  */
 function applyCompression(audioContext, lastNode) {
     const compressor = audioContext.createDynamicsCompressor();
@@ -106,9 +112,9 @@ function applyCompression(audioContext, lastNode) {
 }
 /**
  * Applies distortion to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The wave shaper node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The wave shaper node.
  */
 function applyDistortion(audioContext, lastNode) {
     const waveshaper = audioContext.createWaveShaper();
@@ -118,9 +124,9 @@ function applyDistortion(audioContext, lastNode) {
 }
 /**
  * Applies an echo effect to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The delay node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The delay node.
  */
 function applyEcho(audioContext, lastNode) {
     const delay = audioContext.createDelay(2);

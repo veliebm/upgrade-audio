@@ -6,9 +6,9 @@
 
 /**
  * Converts an AudioBuffer to a WAVE format Blob.
- * @param {AudioBuffer} buffer - The input audio buffer to be converted to WAVE format.
- * @param {number} length - The number of samples to include in the output WAVE file.
- * @returns {Blob} - A Blob representing the audio data in WAVE format.
+ * @param buffer - The input audio buffer to be converted to WAVE format.
+ * @param length - The number of samples to include in the output WAVE file.
+ * @returns - A Blob representing the audio data in WAVE format.
  */
 function bufferToWave(buffer: AudioBuffer, length: number): Blob {
   const wavBuffer = new ArrayBuffer(44 + length * 2);
@@ -47,8 +47,8 @@ function bufferToWave(buffer: AudioBuffer, length: number): Blob {
 
 /**
  * Generates a distortion curve for a given amount of distortion.
- * @param {number} amount - The amount of distortion.
- * @returns {Float32Array} - The generated distortion curve.
+ * @param amount - The amount of distortion.
+ * @returns - The generated distortion curve.
  */
 function generateDistortionCurve(amount: number): Float32Array {
   const samples = 44100;
@@ -66,8 +66,8 @@ function generateDistortionCurve(amount: number): Float32Array {
 
 /**
  * Applies downsampling to an audio buffer.
- * @param {AudioBuffer} audioBuffer - The input audio buffer.
- * @returns {Promise<AudioBuffer>} - The downsampled audio buffer.
+ * @param audioBuffer - The input audio buffer.
+ * @returns - The downsampled audio buffer.
  */
 async function applyDownsampling(
   audioBuffer: AudioBuffer
@@ -87,9 +87,9 @@ async function applyDownsampling(
 
 /**
  * Applies a bandpass filter to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The bandpass filter node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The bandpass filter node.
  */
 function applyBandPassFilter(
   audioContext: AudioContext,
@@ -105,9 +105,9 @@ function applyBandPassFilter(
 
 /**
  * Applies compression to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The dynamics compressor node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The dynamics compressor node.
  */
 function applyCompression(
   audioContext: AudioContext,
@@ -125,9 +125,9 @@ function applyCompression(
 
 /**
  * Applies distortion to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The wave shaper node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The wave shaper node.
  */
 function applyDistortion(
   audioContext: AudioContext,
@@ -141,9 +141,9 @@ function applyDistortion(
 
 /**
  * Applies an echo effect to the audio processing chain.
- * @param {AudioContext} audioContext - The audio context.
- * @param {AudioNode} lastNode - The previous node in the processing chain.
- * @returns {AudioNode} - The delay node.
+ * @param audioContext - The audio context.
+ * @param lastNode - The previous node in the processing chain.
+ * @returns - The delay node.
  */
 function applyEcho(audioContext: AudioContext, lastNode: AudioNode): AudioNode {
   const delay = audioContext.createDelay(2);
